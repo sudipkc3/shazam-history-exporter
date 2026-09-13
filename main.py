@@ -1,4 +1,5 @@
 from shazam_exporter.database import get_tracks
+from shazam_exporter.models import track_from_database_row
 
 
 def main():
@@ -6,23 +7,23 @@ def main():
     print("-" * 40)
 
     try:
-        tracks = get_tracks()
+        raw_tracks = get_tracks()
     except FileNotFoundError as error:
         print(f"Error: {error}")
         return
 
+    tracks = [
+        track_from_database_row(row)
+        for row in raw_tracks
+    ]
+
     print(f"Found {len(tracks)} recognized songs.\n")
 
     for index, track in enumerate(tracks, start=1):
-        title = track.get("ZTITLE") or "Unknown title"
-        artist = track.get("ZSUBTITLE") or "Unknown artist"
-        album = track.get("ZALBUMNAME") or "Unknown album"
-        date = track.get("ZDATE") or "Unknown date"
-
-        print(f"{index}. {title}")
-        print(f"   Artist: {artist}")
-        print(f"   Album:  {album}")
-        print(f"   Date:   {date}")
+        print(f"{index}. {track.title}")
+        print(f"   Artist: {track.artist}")
+        print(f"   Album:  {track.album or 'Unknown album'}")
+        print(f"   Date:   {track.date or 'Unknown date'}")
         print()
 
 
