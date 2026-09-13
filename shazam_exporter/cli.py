@@ -1,9 +1,7 @@
 import argparse
 from pathlib import Path
 
-from shazam_exporter.database import get_tracks
-from shazam_exporter.models import track_from_database_row
-from shazam_exporter.exporters import export_csv, export_json
+from shazam_exporter.service import load_tracks, export_tracks
 
 
 def create_parser():
@@ -31,7 +29,7 @@ def create_parser():
 
 
 def run():
-    """Run the Shazam history export."""
+    """Run the command-line interface."""
 
     parser = create_parser()
     args = parser.parse_args()
@@ -40,33 +38,21 @@ def run():
     print("-" * 40)
 
     try:
-        raw_tracks = get_tracks()
+        tracks = load_tracks()
     except FileNotFoundError as error:
         print(f"Error: {error}")
         return
 
-    tracks = [
-        track_from_database_row(row)
-        for row in raw_tracks
-    ]
-
     print(f"Found {len(tracks)} recognized songs.\n")
 
-    output_directory = args.output
+    exported_files = export_tracks(
+        tracks,
+        args.output,
+        args.format,
+    )
 
-    if args.format in ("csv", "both"):
-        csv_path = output_directory / "shazam_history.csv"
-
-        export_csv(tracks, csv_path)
-
-        print(f"CSV:  {csv_path}")
-
-    if args.format in ("json", "both"):
-        json_path = output_directory / "shazam_history.json"
-
-        export_json(tracks, json_path)
-
-        print(f"JSON: {json_path}")
+    for file_path in exported_files:
+        print(f"Exported: {file_path}")
 
     print("\nExport complete!")
 
