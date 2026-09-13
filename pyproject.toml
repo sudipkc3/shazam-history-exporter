@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shazam-history-exporter"
+version = "1.0.0"
+description = "Export macOS Music Recognition history to CSV and JSON."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Sudip KC" }
+]
+
+[project.urls]
+Homepage = "https://github.com/sudipkc3/shazam-history-exporter"
+Repository = "https://github.com/sudipkc3/shazam-history-exporter"
+
+[tool.setuptools.packages.find]
+include = ["shazam_exporter*"]
