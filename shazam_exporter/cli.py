@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 from shazam_exporter.service import (
@@ -332,9 +333,30 @@ def run_export(tracks, export_name="shazam_history"):
     print(f"📁 Location: {output_directory}")
     print()
 
+def create_parser():
+    """Create the command-line argument parser."""
+
+    parser = argparse.ArgumentParser(
+        prog="shazam-history-exporter",
+        description=(
+            "Export macOS Music Recognition history "
+            "to CSV or JSON."
+        ),
+    )
+
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="Shazam History Exporter 1.0.0",
+    )
+
+    return parser
 
 def run():
     """Run the interactive command-line interface."""
+
+    parser = create_parser()
+    parser.parse_args()
 
     print_header()
 
