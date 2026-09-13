@@ -20,6 +20,13 @@ def create_parser():
         help="Export format. Default: both",
     )
 
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("exports"),
+        help="Output directory. Default: exports",
+    )
+
     return parser
 
 
@@ -45,16 +52,20 @@ def run():
 
     print(f"Found {len(tracks)} recognized songs.\n")
 
-    output_directory = Path("exports")
+    output_directory = args.output
 
     if args.format in ("csv", "both"):
         csv_path = output_directory / "shazam_history.csv"
+
         export_csv(tracks, csv_path)
+
         print(f"CSV:  {csv_path}")
 
     if args.format in ("json", "both"):
         json_path = output_directory / "shazam_history.json"
+
         export_json(tracks, json_path)
+
         print(f"JSON: {json_path}")
 
     print("\nExport complete!")
