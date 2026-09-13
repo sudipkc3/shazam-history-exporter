@@ -3,6 +3,10 @@ from pathlib import Path
 from shazam_exporter.database import get_tracks
 from shazam_exporter.models import track_from_database_row
 from shazam_exporter.exporters import export_csv, export_json
+from shazam_exporter.analysis import (
+    get_unique_song_count,
+    get_duplicate_groups,
+)
 
 
 def load_tracks():
@@ -14,6 +18,20 @@ def load_tracks():
         track_from_database_row(row)
         for row in raw_tracks
     ]
+
+
+def analyze_tracks(tracks):
+    """Analyze the loaded Shazam history."""
+
+    total_count = len(tracks)
+    unique_count = get_unique_song_count(tracks)
+    duplicate_groups = get_duplicate_groups(tracks)
+
+    return {
+        "total": total_count,
+        "unique": unique_count,
+        "duplicate_groups": duplicate_groups,
+    }
 
 
 def export_tracks(
