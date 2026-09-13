@@ -350,13 +350,32 @@ def create_parser():
         version="Shazam History Exporter 1.0.0",
     )
 
-    return parser
+    subparsers = parser.add_subparsers(
+        dest="command",
+    )
 
+    export_parser = subparsers.add_parser(
+        "export",
+        help="Export Shazam history.",
+    )
+
+    export_parser.add_argument(
+        "--format",
+        choices=["csv", "json", "both"],
+        default="both",
+        help="Export format (default: both).",
+    )
+
+    return parser
 def run():
     """Run the interactive command-line interface."""
 
     parser = create_parser()
-    parser.parse_args()
+    args = parser.parse_args()
+
+    if args.command == "export":
+        print("Export command selected.")
+        return
 
     print_header()
 
