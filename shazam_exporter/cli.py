@@ -374,7 +374,44 @@ def run():
     args = parser.parse_args()
 
     if args.command == "export":
-        print("Export command selected.")
+        print_header()
+
+        print("🔍 Reading your Music Recognition history...")
+        print()
+
+        try:
+            tracks = load_tracks()
+
+            output_directory = Path("exports")
+
+            exported_files = export_tracks(
+                tracks,
+                output_directory,
+                args.format,
+                "shazam_history",
+            )
+
+        except FileNotFoundError:
+            print("❌ Music Recognition database not found.")
+            print()
+            print("No files were modified.")
+            print()
+            return
+
+        except RuntimeError as error:
+            print("❌ Export failed.")
+            print()
+            print(f"Details: {error}")
+            print()
+            return
+
+        print(f"✅ Exported {len(tracks)} tracks.")
+        print()
+
+        for file_path in exported_files:
+            print(f"📄 {file_path}")
+
+        print()
         return
 
     print_header()
