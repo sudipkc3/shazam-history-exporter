@@ -5,7 +5,9 @@ from shazam_exporter.models import track_from_database_row
 from shazam_exporter.exporters import export_csv, export_json
 
 
-def main():
+def run():
+    """Run the Shazam history export."""
+
     print("🎵 Shazam History Exporter")
     print("-" * 40)
 
@@ -33,7 +35,3 @@ def main():
     print("Export complete!")
     print(f"CSV:  {csv_path}")
     print(f"JSON: {json_path}")
-
-
-if __name__ == "__main__":
-    main()
