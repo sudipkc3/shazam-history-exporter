@@ -16,6 +16,7 @@ Export your **macOS Music Recognition / Shazam history** to CSV and JSON — saf
 [Exports](#-export-formats) ·
 [Architecture](#-architecture) ·
 [Development](#-development) ·
+[Testing](#testing)
 [Roadmap](#-roadmap)
 
 </p>
@@ -57,6 +58,7 @@ It is designed for people who have accumulated years of Shazam/Music Recognition
 | [Architecture](#-architecture)        | Project structure        |
 | [Safety & Privacy](#-safety--privacy) | How your data is handled |
 | [Development](#-development)          | Development setup        |
+| [Testing](#testing)                  | Development setup        |
 | [Roadmap](#-roadmap)                  | Planned features         |
 | [Contributing](#-contributing)        | Contribution guidelines  |
 
@@ -556,6 +558,43 @@ python main.py
 The project currently uses only Python's standard library, so there are no dependency installation steps.
 
 ---
+
+## Testing
+
+The project includes an automated test suite using Python's built-in `unittest` framework.
+
+### Run all tests
+
+```bash
+python -m unittest discover -v
+```
+
+### Current test coverage
+
+The test suite currently includes **15 tests** across four modules:
+
+| Test module          |  Tests | Coverage                                       |
+| -------------------- | -----: | ---------------------------------------------- |
+| `test_models.py`     |      6 | Apple timestamps, Track identifiers, fallbacks |
+| `test_analysis.py`   |      3 | Duplicate detection, unique song extraction    |
+| `test_validation.py` |      4 | Metadata validation and valid track detection  |
+| `test_exporters.py`  |      2 | CSV and JSON export                            |
+| **Total**            | **15** | **All passing**                                |
+
+The exporter tests use temporary directories, so running the test suite does not modify the project's real `exports/` directory or the user's Music Recognition history.
+
+### Test structure
+
+```text
+tests/
+├── __init__.py
+├── test_models.py
+├── test_analysis.py
+├── test_validation.py
+└── test_exporters.py
+```
+
+The tests use only Python's standard library and require no additional dependencies.
 
 ## 🧰 Design Principles
 
