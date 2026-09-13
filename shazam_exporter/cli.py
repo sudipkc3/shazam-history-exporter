@@ -4,6 +4,7 @@ from shazam_exporter.service import (
     load_tracks,
     analyze_tracks,
     export_tracks,
+    get_unique_history_tracks,
 )
 
 
@@ -63,8 +64,9 @@ def choose_main_action():
     print("What would you like to do?")
     print()
     print("  1. Export history")
-    print("  2. View duplicate songs")
-    print("  3. Exit")
+    print("  2. Export unique songs")
+    print("  3. View duplicate songs")
+    print("  4. Exit")
     print()
 
     while True:
@@ -73,10 +75,10 @@ def choose_main_action():
         if choice == "":
             choice = "1"
 
-        if choice in ("1", "2", "3"):
+        if choice in ("1", "2", "3", "4"):
             return choice
 
-        print("⚠️  Invalid option. Please choose 1, 2, or 3.")
+        print("⚠️  Invalid option. Please choose 1, 2, 3, or 4.")
         print()
 
 
@@ -188,7 +190,7 @@ def confirm_export(
     return choice in ("", "y", "yes")
 
 
-def run_export(tracks):
+def run_export(tracks, export_name="shazam_history"):
     """Run the export workflow."""
 
     output_directory = choose_output_directory()
@@ -265,11 +267,30 @@ def run():
             return
 
         if action == "2":
+            unique_tracks = get_unique_history_tracks(tracks)
+
+            print()
+            print("🎵 Unique songs")
+            print("─" * 44)
+            print()
+            print(
+                f"Found {len(unique_tracks)} unique songs "
+                f"from {len(tracks)} recognitions."
+            )
+            print()
+
+            run_export(
+                unique_tracks,
+                export_name="unique_songs",
+            )
+            return
+
+        if action == "3":
             show_duplicate_songs(analysis)
             print()
             continue
 
-        if action == "3":
+        if action == "4":
             print()
             print("👋 Goodbye!")
             print()

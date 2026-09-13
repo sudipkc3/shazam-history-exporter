@@ -6,6 +6,7 @@ from shazam_exporter.exporters import export_csv, export_json
 from shazam_exporter.analysis import (
     get_unique_song_count,
     get_duplicate_groups,
+    get_unique_tracks,
 )
 
 
@@ -32,6 +33,12 @@ def analyze_tracks(tracks):
         "unique": unique_count,
         "duplicate_groups": duplicate_groups,
     }
+
+
+def get_unique_history_tracks(tracks):
+    """Return unique songs from the Shazam history."""
+
+    return get_unique_tracks(tracks)
 
 
 def export_tracks(
