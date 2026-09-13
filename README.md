@@ -600,4 +600,51 @@ The tests use only Python's standard library and require no additional dependenc
 
 The project follows a few simple principles.
 
+### 🔒 Safety First
+
+The original macOS Music Recognition database is **never modified**. The database is opened in read-only mode, and all exports are written to separate files.
+
+### 🧩 Small, Focused Modules
+
+Functionality is separated into small modules instead of putting everything into one large file.
+
+```text
+database.py     → Database access
+models.py       → Track data model
+analysis.py     → Duplicate and uniqueness analysis
+validation.py   → Data quality checks
+exporters.py    → CSV and JSON export
+service.py      → Application logic
+cli.py          → User interface
+```
+
+### 📦 Standard Library First
+
+The project currently uses Python's standard library wherever possible, keeping installation simple and avoiding unnecessary dependencies.
+
+### 🧪 Testable Code
+
+Core functionality is covered by automated tests using Python's built-in `unittest` framework.
+
+The test suite currently contains **15 tests** covering models, analysis, validation, and exports.
+
+### 🔐 Privacy by Design
+
+Shazam history is personal data. Processing happens locally on the user's Mac, and personal history files are excluded from Git using `.gitignore`.
+
+### 🧹 Preserve Original Data
+
+The exporter does not silently remove duplicate recognition events from the history export.
+
+Users can choose between:
+
+* **Full history** — every recognition event
+* **Unique songs** — one entry per identified song
+
+### 🛠️ Keep It Simple
+
+The project aims to solve one problem well: safely extracting and exporting macOS Music Recognition history.
+
+Additional features, such as Spotify integration, are kept separate from the core database and export functionality.
+
 #
