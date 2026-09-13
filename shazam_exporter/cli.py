@@ -3,6 +3,7 @@ from pathlib import Path
 from shazam_exporter.service import (
     load_tracks,
     analyze_tracks,
+    validate_history,
     export_tracks,
     get_unique_history_tracks,
 )
@@ -31,6 +32,86 @@ def show_summary(analysis):
 
     print()
 
+def show_data_quality(tracks):
+    """Display the data quality report."""
+
+    validation = validate_history(tracks)
+
+    total = validation["total"]
+    valid = validation["valid"]
+
+    print()
+    print("🔍 Data quality")
+    print("─" * 44)
+    print()
+
+    print(f"✓ {total} tracks loaded.")
+    print()
+
+    if valid == total:
+        print(f"✓ {valid} valid tracks.")
+    else:
+        invalid = total - valid
+        print(f"✓ {valid} valid tracks.")
+        print(f"⚠ {invalid} tracks need attention.")
+
+    print()
+    print("Metadata")
+    print("─" * 44)
+
+    print(
+        f"  Titles:           "
+        f"{total - validation['missing_titles']} / {total}"
+    )
+
+    print(
+        f"  Artists:          "
+        f"{total - validation['missing_artists']} / {total}"
+    )
+
+    print(
+        f"  Dates:            "
+        f"{total - validation['missing_dates']} / {total}"
+    )
+
+    print(
+        f"  Shazam keys:      "
+        f"{total - validation['missing_shazam_keys']} / {total}"
+    )
+
+    print(
+        f"  Shazam URLs:      "
+        f"{total - validation['missing_shazam_urls']} / {total}"
+    )
+
+    print()
+    print("Identifiers")
+    print("─" * 44)
+
+    print(
+        f"  ISRC:             "
+        f"{total - validation['missing_isrcs']} / {total}"
+    )
+
+    print(
+        f"  Apple Music ID:   "
+        f"{total - validation['missing_apple_music_ids']} / {total}"
+    )
+
+    print(
+        f"  Stable identifier:"
+        f" {valid} / {total}"
+    )
+
+    print()
+
+    if valid == total:
+        print("✓ All tracks are ready for export.")
+    else:
+        print("⚠ Some tracks have incomplete metadata.")
+
+    print()
+    input("Press Enter to return...")
 
 def show_duplicate_songs(analysis):
     """Display songs that were recognized more than once."""
@@ -66,7 +147,8 @@ def choose_main_action():
     print("  1. Export history")
     print("  2. Export unique songs")
     print("  3. View duplicate songs")
-    print("  4. Exit")
+    print("  4. View data quality")
+    print("  5. Exit")
     print()
 
     while True:
@@ -75,10 +157,10 @@ def choose_main_action():
         if choice == "":
             choice = "1"
 
-        if choice in ("1", "2", "3", "4"):
+        if choice in ("1", "2", "3", "4", "5"):
             return choice
 
-        print("⚠️  Invalid option. Please choose 1, 2, 3, or 4.")
+        print("⚠️  Invalid option. Please choose 1, 2, 3, 4, or 5.")
         print()
 
 
@@ -290,8 +372,13 @@ def run():
             show_duplicate_songs(analysis)
             print()
             continue
-
+        
         if action == "4":
+            show_data_quality(tracks)
+            print()
+            continue
+
+        if action == "5":
             print()
             print("👋 Goodbye!")
             print()

@@ -8,6 +8,10 @@ from shazam_exporter.analysis import (
     get_duplicate_groups,
     get_unique_tracks,
 )
+from shazam_exporter.validation import (
+    validate_tracks,
+    get_valid_track_count,
+)
 
 
 def load_tracks():
@@ -33,6 +37,16 @@ def analyze_tracks(tracks):
         "unique": unique_count,
         "duplicate_groups": duplicate_groups,
     }
+
+
+def validate_history(tracks):
+    """Validate the quality and completeness of the history."""
+
+    validation = validate_tracks(tracks)
+
+    validation["valid"] = get_valid_track_count(tracks)
+
+    return validation
 
 
 def get_unique_history_tracks(tracks):
