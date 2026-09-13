@@ -81,7 +81,6 @@ git clone https://github.com/sudipkc3/shazam-history-exporter.git
 cd shazam-history-exporter
 ```
 
-Replace `YOUR_USERNAME` with your GitHub username.
 
 ### 2. Create a virtual environment
 
