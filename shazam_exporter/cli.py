@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from shazam_exporter.service import (
     load_tracks,
     analyze_tracks,
@@ -12,6 +14,70 @@ def print_header():
     print("🎵 Shazam History Exporter")
     print("─" * 44)
     print()
+
+
+def show_summary(analysis):
+    """Display a summary of the Shazam history."""
+
+    print(f"✓ Found {analysis['total']} recognized songs.")
+    print(f"✓ {analysis['unique']} unique songs.")
+
+    if analysis["duplicate_groups"]:
+        print(
+            f"ℹ {len(analysis['duplicate_groups'])} "
+            "songs were recognized more than once."
+        )
+
+    print()
+
+
+def show_duplicate_songs(analysis):
+    """Display songs that were recognized more than once."""
+
+    duplicates = analysis["duplicate_groups"]
+
+    print()
+    print("🔁 Duplicate songs")
+    print("─" * 44)
+    print()
+
+    if not duplicates:
+        print("✓ No duplicate songs found.")
+        print()
+        input("Press Enter to return...")
+        return
+
+    for (title, artist), count in duplicates:
+        print(f"  {count}×  {title.title()}")
+        print(f"      {artist.title()}")
+        print()
+
+    print("─" * 44)
+    print()
+    input("Press Enter to return...")
+
+
+def choose_main_action():
+    """Ask the user what they want to do."""
+
+    print("What would you like to do?")
+    print()
+    print("  1. Export history")
+    print("  2. View duplicate songs")
+    print("  3. Exit")
+    print()
+
+    while True:
+        choice = input("Select an option [1]: ").strip()
+
+        if choice == "":
+            choice = "1"
+
+        if choice in ("1", "2", "3"):
+            return choice
+
+        print("⚠️  Invalid option. Please choose 1, 2, or 3.")
+        print()
 
 
 def choose_output_directory():
@@ -36,12 +102,9 @@ def choose_output_directory():
             choice = "1"
 
         if choice == "1":
-            from pathlib import Path
             return Path("exports")
 
         if choice == "2":
-            from pathlib import Path
-
             print()
             folder = input("Enter output folder: ").strip()
 
@@ -125,30 +188,8 @@ def confirm_export(
     return choice in ("", "y", "yes")
 
 
-def run():
-    """Run the interactive command-line interface."""
-
-    print_header()
-
-    print("🔍 Reading your Music Recognition history...")
-    print()
-
-    try:
-        tracks = load_tracks()
-    except FileNotFoundError as error:
-        print(f"❌ Error: {error}")
-        return
-
-    analysis = analyze_tracks(tracks)
-
-    print(f"✓ Found {analysis['total']} recognized songs.")
-    print(f"✓ {analysis['unique']} unique songs.")
-
-    if analysis["duplicate_groups"]:
-        print(
-            f"ℹ {len(analysis['duplicate_groups'])} "
-            "songs were recognized more than once."
-        )
+def run_export(tracks):
+    """Run the export workflow."""
 
     output_directory = choose_output_directory()
 
@@ -196,6 +237,43 @@ def run():
     print(f"🎉 Successfully exported {len(tracks)} songs!")
     print(f"📁 Location: {output_directory}")
     print()
+
+
+def run():
+    """Run the interactive command-line interface."""
+
+    print_header()
+
+    print("🔍 Reading your Music Recognition history...")
+    print()
+
+    try:
+        tracks = load_tracks()
+    except FileNotFoundError as error:
+        print(f"❌ Error: {error}")
+        return
+
+    analysis = analyze_tracks(tracks)
+
+    show_summary(analysis)
+
+    while True:
+        action = choose_main_action()
+
+        if action == "1":
+            run_export(tracks)
+            return
+
+        if action == "2":
+            show_duplicate_songs(analysis)
+            print()
+            continue
+
+        if action == "3":
+            print()
+            print("👋 Goodbye!")
+            print()
+            return
 
 
 if __name__ == "__main__":
