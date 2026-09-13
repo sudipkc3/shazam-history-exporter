@@ -5,9 +5,6 @@ from pathlib import Path
 from shazam_exporter.models import Track
 
 
-EXPORT_DIRECTORY = Path("exports")
-
-
 def track_to_dict(track: Track) -> dict:
     """Convert a Track object into a dictionary."""
 
@@ -24,7 +21,10 @@ def track_to_dict(track: Track) -> dict:
     }
 
 
-def export_json(tracks: list[Track], output_path: Path) -> None:
+def export_json(
+    tracks: list[Track],
+    output_path: Path,
+) -> None:
     """Export tracks to a JSON file."""
 
     data = [
@@ -37,7 +37,10 @@ def export_json(tracks: list[Track], output_path: Path) -> None:
         exist_ok=True,
     )
 
-    with output_path.open("w", encoding="utf-8") as file:
+    with output_path.open(
+        "w",
+        encoding="utf-8",
+    ) as file:
         json.dump(
             data,
             file,
@@ -46,7 +49,10 @@ def export_json(tracks: list[Track], output_path: Path) -> None:
         )
 
 
-def export_csv(tracks: list[Track], output_path: Path) -> None:
+def export_csv(
+    tracks: list[Track],
+    output_path: Path,
+) -> None:
     """Export tracks to a CSV file."""
 
     data = [

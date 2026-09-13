@@ -225,10 +225,11 @@ def run_export(tracks, export_name="shazam_history"):
     print()
 
     exported_files = export_tracks(
-        tracks,
-        output_directory,
-        export_format,
-    )
+    tracks,
+    output_directory,
+    export_format,
+    export_name,
+)
 
     for file_path in exported_files:
         print(f"✓ Exported: {file_path}")

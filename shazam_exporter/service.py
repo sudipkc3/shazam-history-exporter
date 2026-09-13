@@ -45,6 +45,7 @@ def export_tracks(
     tracks,
     output_directory: Path,
     export_format: str,
+    export_name: str = "shazam_history",
 ):
     """Export tracks in the requested format."""
 
@@ -56,16 +57,22 @@ def export_tracks(
     exported_files = []
 
     if export_format in ("csv", "both"):
-        csv_path = output_directory / "shazam_history.csv"
+        csv_path = output_directory / f"{export_name}.csv"
 
-        export_csv(tracks, csv_path)
+        export_csv(
+            tracks,
+            csv_path,
+        )
 
         exported_files.append(csv_path)
 
     if export_format in ("json", "both"):
-        json_path = output_directory / "shazam_history.json"
+        json_path = output_directory / f"{export_name}.json"
 
-        export_json(tracks, json_path)
+        export_json(
+            tracks,
+            json_path,
+        )
 
         exported_files.append(json_path)
 
