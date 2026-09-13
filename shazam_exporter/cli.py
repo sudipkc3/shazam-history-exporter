@@ -1,3 +1,4 @@
+import argparse
 from pathlib import Path
 
 from shazam_exporter.database import get_tracks
@@ -5,8 +6,28 @@ from shazam_exporter.models import track_from_database_row
 from shazam_exporter.exporters import export_csv, export_json
 
 
+def create_parser():
+    """Create the command-line argument parser."""
+
+    parser = argparse.ArgumentParser(
+        description="Export your macOS Shazam history."
+    )
+
+    parser.add_argument(
+        "--format",
+        choices=["csv", "json", "both"],
+        default="both",
+        help="Export format. Default: both",
+    )
+
+    return parser
+
+
 def run():
     """Run the Shazam history export."""
+
+    parser = create_parser()
+    args = parser.parse_args()
 
     print("🎵 Shazam History Exporter")
     print("-" * 40)
@@ -26,12 +47,18 @@ def run():
 
     output_directory = Path("exports")
 
-    csv_path = output_directory / "shazam_history.csv"
-    json_path = output_directory / "shazam_history.json"
+    if args.format in ("csv", "both"):
+        csv_path = output_directory / "shazam_history.csv"
+        export_csv(tracks, csv_path)
+        print(f"CSV:  {csv_path}")
 
-    export_csv(tracks, csv_path)
-    export_json(tracks, json_path)
+    if args.format in ("json", "both"):
+        json_path = output_directory / "shazam_history.json"
+        export_json(tracks, json_path)
+        print(f"JSON: {json_path}")
 
-    print("Export complete!")
-    print(f"CSV:  {csv_path}")
-    print(f"JSON: {json_path}")
+    print("\nExport complete!")
+
+
+if __name__ == "__main__":
+    run()
