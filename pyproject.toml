@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "shazam-history-exporter"
 version = "1.0.0"
@@ -16,6 +12,9 @@ authors = [
 [project.urls]
 Homepage = "https://github.com/sudipkc3/shazam-history-exporter"
 Repository = "https://github.com/sudipkc3/shazam-history-exporter"
+
+[project.scripts]
+shazam-history-exporter = "shazam_exporter.cli:run"
 
 [tool.setuptools.packages.find]
 include = ["shazam_exporter*"]

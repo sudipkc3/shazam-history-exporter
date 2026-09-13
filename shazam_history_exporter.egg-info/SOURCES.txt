@@ -12,6 +12,7 @@ shazam_exporter/validation.py
 shazam_history_exporter.egg-info/PKG-INFO
 shazam_history_exporter.egg-info/SOURCES.txt
 shazam_history_exporter.egg-info/dependency_links.txt
+shazam_history_exporter.egg-info/entry_points.txt
 shazam_history_exporter.egg-info/top_level.txt
 tests/test_analysis.py
 tests/test_exporters.py
