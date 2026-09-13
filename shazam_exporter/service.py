@@ -63,31 +63,37 @@ def export_tracks(
 ):
     """Export tracks in the requested format."""
 
-    output_directory.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    exported_files = []
-
-    if export_format in ("csv", "both"):
-        csv_path = output_directory / f"{export_name}.csv"
-
-        export_csv(
-            tracks,
-            csv_path,
+    try:
+        output_directory.mkdir(
+            parents=True,
+            exist_ok=True,
         )
 
-        exported_files.append(csv_path)
+        exported_files = []
 
-    if export_format in ("json", "both"):
-        json_path = output_directory / f"{export_name}.json"
+        if export_format in ("csv", "both"):
+            csv_path = output_directory / f"{export_name}.csv"
 
-        export_json(
-            tracks,
-            json_path,
-        )
+            export_csv(
+                tracks,
+                csv_path,
+            )
 
-        exported_files.append(json_path)
+            exported_files.append(csv_path)
 
-    return exported_files
+        if export_format in ("json", "both"):
+            json_path = output_directory / f"{export_name}.json"
+
+            export_json(
+                tracks,
+                json_path,
+            )
+
+            exported_files.append(json_path)
+
+        return exported_files
+
+    except OSError as error:
+        raise RuntimeError(
+            f"Could not write export files: {error}"
+        ) from error

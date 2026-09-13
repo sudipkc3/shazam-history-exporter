@@ -306,12 +306,21 @@ def run_export(tracks, export_name="shazam_history"):
     print(f"📤 Exporting {len(tracks)} songs...")
     print()
 
-    exported_files = export_tracks(
-    tracks,
-    output_directory,
-    export_format,
-    export_name,
-)
+    try:
+        exported_files = export_tracks(
+            tracks,
+            output_directory,
+            export_format,
+            export_name,
+        )
+
+    except RuntimeError as error:
+        print()
+        print("❌ Export failed.")
+        print()
+        print(f"Details: {error}")
+        print()
+        return
 
     for file_path in exported_files:
         print(f"✓ Exported: {file_path}")
@@ -334,8 +343,25 @@ def run():
 
     try:
         tracks = load_tracks()
-    except FileNotFoundError as error:
-        print(f"❌ Error: {error}")
+
+    except FileNotFoundError:
+        print("❌ Music Recognition database not found.")
+        print()
+        print("Possible reasons:")
+        print("  • Music Recognition has not been used yet.")
+        print("  • macOS changed the database location.")
+        print()
+        print("No files were modified.")
+        print()
+        return
+
+    except RuntimeError as error:
+        print("❌ Could not read Music Recognition history.")
+        print()
+        print(f"Details: {error}")
+        print()
+        print("No files were modified.")
+        print()
         return
 
     analysis = analyze_tracks(tracks)

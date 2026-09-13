@@ -33,10 +33,16 @@ def connect_database() -> sqlite3.Connection:
 
     database_uri = f"file:{database_path}?mode=ro"
 
-    connection = sqlite3.connect(
-        database_uri,
-        uri=True,
-    )
+    try:
+        connection = sqlite3.connect(
+            database_uri,
+            uri=True,
+        )
+
+    except sqlite3.Error as error:
+        raise RuntimeError(
+            f"Could not open the Shazam database: {error}"
+        ) from error
 
     connection.row_factory = sqlite3.Row
 
@@ -54,7 +60,13 @@ def get_tracks() -> list[dict]:
         ORDER BY ZDATE DESC
     """
 
-    with connect_database() as connection:
-        rows = connection.execute(query).fetchall()
+    try:
+        with connect_database() as connection:
+            rows = connection.execute(query).fetchall()
+
+    except sqlite3.Error as error:
+        raise RuntimeError(
+            f"Could not read the Shazam database: {error}"
+        ) from error
 
     return [dict(row) for row in rows]
