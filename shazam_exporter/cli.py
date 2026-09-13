@@ -366,7 +366,14 @@ def create_parser():
         help="Export format (default: both).",
     )
 
+    export_parser.add_argument(
+        "--unique",
+        action="store_true",
+        help="Export only unique songs.",
+    )
+
     return parser
+
 def run():
     """Run the interactive command-line interface."""
 
@@ -380,7 +387,14 @@ def run():
         print()
 
         try:
+            
             tracks = load_tracks()
+
+            if args.unique:
+                tracks = get_unique_history_tracks(tracks)
+                export_name = "unique_songs"
+            else:
+                export_name = "shazam_history"
 
             output_directory = Path("exports")
 
@@ -388,7 +402,7 @@ def run():
                 tracks,
                 output_directory,
                 args.format,
-                "shazam_history",
+                export_name,
             )
 
         except FileNotFoundError:

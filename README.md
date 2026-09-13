@@ -205,6 +205,74 @@ It also determines whether every track has a usable stable identifier.
 
 Closes the application without modifying your Music Recognition database.
 
+### Command-line options
+
+The exporter supports both an interactive mode and a simple command-line mode.
+
+#### Interactive mode
+
+For the easiest experience, run:
+
+```bash
+python main.py
+```
+
+This opens the interactive menu where you can:
+
+* Export your complete Shazam history
+* Export unique songs
+* View duplicate songs
+* View data quality
+* Exit the application
+
+#### Direct export
+
+Export the complete recognition history:
+
+```bash
+python main.py export
+```
+
+Export as CSV:
+
+```bash
+python main.py export --format csv
+```
+
+Export as JSON:
+
+```bash
+python main.py export --format json
+```
+
+Export only unique songs:
+
+```bash
+python main.py export --unique
+```
+
+Combine unique songs with a specific format:
+
+```bash
+python main.py export --format csv --unique
+```
+
+#### Help and version
+
+View available commands:
+
+```bash
+python main.py --help
+```
+
+View the application version:
+
+```bash
+python main.py --version
+```
+
+The CLI intentionally keeps the number of options small so that common tasks remain simple and approachable.
+
 ---
 
 ## 📦 Export Formats
