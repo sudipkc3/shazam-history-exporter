@@ -16,7 +16,7 @@ Export your **macOS Music Recognition / Shazam history** to CSV and JSON — saf
 [Exports](#-export-formats) ·
 [Architecture](#-architecture) ·
 [Development](#-development) ·
-[Testing](#testing)
+[Testing](#testing) ·
 [Roadmap](#-roadmap)
 
 </p>
@@ -39,8 +39,9 @@ It is designed for people who have accumulated years of Shazam/Music Recognition
 * 🎯 Extract unique songs
 * 🔍 Validate metadata quality
 * 🆔 Use stable identifiers such as ISRC and Shazam keys
-* 📁 Choose a custom export directory
 * 💻 Interactive command-line interface
+* ⚡ Direct command-line export
+* 📦 Installable as a Python package
 * 🚫 No external Python dependencies
 * 🔐 Process your data locally
 
@@ -48,19 +49,20 @@ It is designed for people who have accumulated years of Shazam/Music Recognition
 
 ## 🧭 Navigation
 
-| Section                               | Description              |
-| ------------------------------------- | ------------------------ |
-| [Overview](#-overview)                | What the project does    |
-| [Installation](#-installation)        | Set up the project       |
-| [Usage](#-usage)                      | Run the exporter         |
-| [Export Formats](#-export-formats)    | CSV and JSON output      |
-| [How It Works](#-how-it-works)        | Data flow                |
-| [Architecture](#-architecture)        | Project structure        |
-| [Safety & Privacy](#-safety--privacy) | How your data is handled |
-| [Development](#-development)          | Development setup        |
-| [Testing](#testing)                  | Development setup        |
-| [Roadmap](#-roadmap)                  | Planned features         |
-| [Contributing](#-contributing)        | Contribution guidelines  |
+| Section                                  | Description              |
+| ---------------------------------------- | ------------------------ |
+| [Overview](#-overview)                   | What the project does    |
+| [Installation](#-installation)           | Set up the project       |
+| [Usage](#-usage)                         | Run the exporter         |
+| [Export Formats](#-export-formats)       | CSV and JSON output      |
+| [How It Works](#-how-it-works)           | Data flow                |
+| [Architecture](#-architecture)           | Project structure        |
+| [Safety & Privacy](#-safety--privacy)    | How your data is handled |
+| [Development](#-development)             | Development setup        |
+| [Testing](#testing)                      | Run the test suite       |
+| [Design Principles](#-design-principles) | Project philosophy       |
+| [Roadmap](#-roadmap)                     | Planned features         |
+| [Contributing](#-contributing)           | Contribution guidelines  |
 
 ---
 
@@ -74,7 +76,7 @@ Currently supported:
 * Python 3.10+
 * macOS Music Recognition / Shazam history
 
-No third-party Python packages are required.
+The project uses only Python's standard library and does not require third-party runtime dependencies.
 
 ### 1. Clone the repository
 
@@ -82,7 +84,6 @@ No third-party Python packages are required.
 git clone https://github.com/sudipkc3/shazam-history-exporter.git
 cd shazam-history-exporter
 ```
-
 
 ### 2. Create a virtual environment
 
@@ -96,10 +97,22 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
-### 4. Run the application
+### 4. Install the project
 
 ```bash
-python main.py
+python -m pip install -e .
+```
+
+After installation, the `shazam-history-exporter` command becomes available:
+
+```bash
+shazam-history-exporter --version
+```
+
+You should see:
+
+```text
+Shazam History Exporter 1.0.0
 ```
 
 ---
@@ -183,7 +196,7 @@ Example:
       Example Artist
 ```
 
-This is useful for understanding how often the same song was recognized.
+This is useful for understanding repeated recognition events.
 
 ### 4. View data quality
 
@@ -205,6 +218,8 @@ It also determines whether every track has a usable stable identifier.
 
 Closes the application without modifying your Music Recognition database.
 
+---
+
 ### Command-line options
 
 The exporter supports both an interactive mode and a simple command-line mode.
@@ -214,7 +229,7 @@ The exporter supports both an interactive mode and a simple command-line mode.
 For the easiest experience, run:
 
 ```bash
-python main.py
+shazam-history-exporter
 ```
 
 This opens the interactive menu where you can:
@@ -225,36 +240,48 @@ This opens the interactive menu where you can:
 * View data quality
 * Exit the application
 
+For development, you can also run:
+
+```bash
+python main.py
+```
+
 #### Direct export
 
 Export the complete recognition history:
 
 ```bash
-python main.py export
+shazam-history-exporter export
 ```
 
 Export as CSV:
 
 ```bash
-python main.py export --format csv
+shazam-history-exporter export --format csv
 ```
 
 Export as JSON:
 
 ```bash
-python main.py export --format json
+shazam-history-exporter export --format json
+```
+
+Export both CSV and JSON:
+
+```bash
+shazam-history-exporter export --format both
 ```
 
 Export only unique songs:
 
 ```bash
-python main.py export --unique
+shazam-history-exporter export --unique
 ```
 
 Combine unique songs with a specific format:
 
 ```bash
-python main.py export --format csv --unique
+shazam-history-exporter export --format csv --unique
 ```
 
 #### Help and version
@@ -262,13 +289,13 @@ python main.py export --format csv --unique
 View available commands:
 
 ```bash
-python main.py --help
+shazam-history-exporter --help
 ```
 
 View the application version:
 
 ```bash
-python main.py --version
+shazam-history-exporter --version
 ```
 
 The CLI intentionally keeps the number of options small so that common tasks remain simple and approachable.
@@ -473,7 +500,7 @@ There is currently no:
 
 Your exported files contain your personal Music Recognition history.
 
-Do **not** commit exported history files to GitHub.
+**Do not commit exported history files to GitHub.**
 
 The repository includes:
 
@@ -511,27 +538,46 @@ shazam-history-exporter/
 │
 ├── .gitignore
 ├── README.md
+├── LICENSE
+├── pyproject.toml
 ├── main.py
 │
-└── shazam_exporter/
+├── shazam_exporter/
+│   ├── __init__.py
+│   ├── database.py
+│   ├── models.py
+│   ├── analysis.py
+│   ├── validation.py
+│   ├── exporters.py
+│   ├── service.py
+│   └── cli.py
+│
+└── tests/
     ├── __init__.py
-    ├── database.py
-    ├── models.py
-    ├── analysis.py
-    ├── validation.py
-    ├── exporters.py
-    ├── service.py
-    └── cli.py
+    ├── test_models.py
+    ├── test_analysis.py
+    ├── test_validation.py
+    └── test_exporters.py
 ```
 
 ### `main.py`
 
-Application entry point.
+Development entry point.
 
 ```text
 main.py
    ↓
 cli.run()
+```
+
+### `pyproject.toml`
+
+Defines the Python package, project metadata, version, build configuration, and installed console command.
+
+```text
+pyproject.toml
+      ↓
+shazam-history-exporter
 ```
 
 ### `database.py`
@@ -600,9 +646,9 @@ Responsible for:
 * Terminal interface
 * Menus
 * User input
-* Confirmation
 * Displaying results
 * Friendly error messages
+* Command-line arguments
 
 ---
 
@@ -615,19 +661,35 @@ python3 -m venv .venv
 source .venv/bin/activate
 ```
 
+### Install the project
+
+```bash
+python -m pip install -e .
+```
+
 ### Run the application
 
 ```bash
 python main.py
 ```
 
-### Check the project
+Or use the installed command:
 
-The project currently uses only Python's standard library, so there are no dependency installation steps.
+```bash
+shazam-history-exporter
+```
+
+### Check the version
+
+```bash
+shazam-history-exporter --version
+```
+
+The project currently uses only Python's standard library, so there are no additional runtime dependencies.
 
 ---
 
-## Testing
+## 🧪 Testing
 
 The project includes an automated test suite using Python's built-in `unittest` framework.
 
@@ -664,13 +726,17 @@ tests/
 
 The tests use only Python's standard library and require no additional dependencies.
 
+---
+
 ## 🧰 Design Principles
 
 The project follows a few simple principles.
 
 ### 🔒 Safety First
 
-The original macOS Music Recognition database is **never modified**. The database is opened in read-only mode, and all exports are written to separate files.
+The original macOS Music Recognition database is **never modified**.
+
+The database is opened in read-only mode, and all exports are written to separate files.
 
 ### 🧩 Small, Focused Modules
 
@@ -698,7 +764,9 @@ The test suite currently contains **15 tests** covering models, analysis, valida
 
 ### 🔐 Privacy by Design
 
-Shazam history is personal data. Processing happens locally on the user's Mac, and personal history files are excluded from Git using `.gitignore`.
+Shazam history is personal data.
+
+Processing happens locally on the user's Mac, and personal history files are excluded from Git using `.gitignore`.
 
 ### 🧹 Preserve Original Data
 
@@ -711,8 +779,123 @@ Users can choose between:
 
 ### 🛠️ Keep It Simple
 
-The project aims to solve one problem well: safely extracting and exporting macOS Music Recognition history.
+The project aims to solve one problem well:
+
+> Safely extracting and exporting macOS Music Recognition history.
 
 Additional features, such as Spotify integration, are kept separate from the core database and export functionality.
 
-#
+---
+
+## 🗺️ Roadmap
+
+### Completed
+
+* [x] SQLite database reader
+* [x] Track data model
+* [x] Stable track identifiers
+* [x] Duplicate analysis
+* [x] Unique-song extraction
+* [x] CSV export
+* [x] JSON export
+* [x] Data validation
+* [x] Error handling and safety
+* [x] README documentation
+* [x] GitHub repository cleanup
+* [x] Automated test suite
+* [x] Improve CLI options
+* [x] Add `pyproject.toml` packaging
+* [x] Add installable console command
+
+### Planned
+
+* [ ] Improve macOS compatibility
+* [ ] Add richer history statistics
+* [ ] Spotify integration
+* [ ] Spotify track matching
+* [ ] Spotify playlist creation
+* [ ] GitHub release
+
+---
+
+## 🎧 Future Spotify Integration
+
+Spotify integration is planned as a separate feature rather than being part of the core exporter.
+
+The intended architecture is:
+
+```text
+Shazam History
+      ↓
+Unique Tracks
+      ↓
+Spotify Matcher
+      ↓
+Spotify Track IDs
+      ↓
+Spotify Playlist
+```
+
+Potential future functionality:
+
+* Match Shazam tracks with Spotify
+* Handle tracks that cannot be found
+* Create a Spotify playlist
+* Add matched songs automatically
+* Report unmatched songs
+
+Spotify integration is **not currently implemented**.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+Before submitting a pull request:
+
+1. Create a fork of the repository.
+2. Create a feature branch.
+3. Make your changes.
+4. Run the test suite.
+5. Make sure personal Shazam exports are not included.
+6. Submit a pull request.
+
+Run the tests with:
+
+```bash
+python -m unittest discover -v
+```
+
+Please keep contributions focused, modular, and consistent with the project's privacy-first design.
+
+---
+
+## ⚠️ Disclaimer
+
+This project is an independent open-source utility and is **not affiliated with, endorsed by, or sponsored by Apple or Shazam**.
+
+The application relies on the local macOS Music Recognition database. Apple may change the database structure, location, or behavior in future macOS versions.
+
+As a result, compatibility may change over time.
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the [`LICENSE`](LICENSE) file for details.
+
+---
+
+## ⭐ Support the Project
+
+If this project helps you export or recover your Music Recognition history, consider:
+
+⭐ Starring the repository
+🐛 Reporting issues
+💡 Suggesting improvements
+🔧 Contributing code
+
+Every contribution helps improve the project for other macOS users.
