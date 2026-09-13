@@ -1,6 +1,8 @@
-from pathlib import Path
-
-from shazam_exporter.service import load_tracks, export_tracks
+from shazam_exporter.service import (
+    load_tracks,
+    analyze_tracks,
+    export_tracks,
+)
 
 
 def print_header():
@@ -12,7 +14,7 @@ def print_header():
     print()
 
 
-def choose_output_directory() -> Path | None:
+def choose_output_directory():
     """Ask the user where the export should be saved."""
 
     print("📁 Step 1 of 2 — Choose export location")
@@ -34,9 +36,12 @@ def choose_output_directory() -> Path | None:
             choice = "1"
 
         if choice == "1":
+            from pathlib import Path
             return Path("exports")
 
         if choice == "2":
+            from pathlib import Path
+
             print()
             folder = input("Enter output folder: ").strip()
 
@@ -54,7 +59,7 @@ def choose_output_directory() -> Path | None:
         print()
 
 
-def choose_export_format() -> str | None:
+def choose_export_format():
     """Ask the user which export format they want."""
 
     print()
@@ -92,11 +97,11 @@ def choose_export_format() -> str | None:
 
 
 def confirm_export(
-    track_count: int,
-    output_directory: Path,
-    export_format: str,
-) -> bool:
-    """Show a summary and ask the user to confirm the export."""
+    track_count,
+    output_directory,
+    export_format,
+):
+    """Show export summary and ask for confirmation."""
 
     format_names = {
         "csv": "CSV",
@@ -104,15 +109,13 @@ def confirm_export(
         "both": "CSV + JSON",
     }
 
-    format_name = format_names[export_format]
-
     print()
     print("📋 Export summary")
     print("─" * 44)
     print()
     print(f"  Songs:      {track_count}")
     print(f"  Location:   {output_directory}")
-    print(f"  Format:     {format_name}")
+    print(f"  Format:     {format_names[export_format]}")
     print()
     print("Ready to export?")
     print()
@@ -136,7 +139,16 @@ def run():
         print(f"❌ Error: {error}")
         return
 
-    print(f"✓ Found {len(tracks)} recognized songs.")
+    analysis = analyze_tracks(tracks)
+
+    print(f"✓ Found {analysis['total']} recognized songs.")
+    print(f"✓ {analysis['unique']} unique songs.")
+
+    if analysis["duplicate_groups"]:
+        print(
+            f"ℹ {len(analysis['duplicate_groups'])} "
+            "songs were recognized more than once."
+        )
 
     output_directory = choose_output_directory()
 
