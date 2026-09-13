@@ -30,6 +30,34 @@ class Track:
     shazam_url: Optional[str] = None
     artwork_url: Optional[str] = None
 
+    def get_identifier(self) -> tuple[str, str]:
+        """
+        Return the best available stable identifier for the track.
+
+        Priority:
+        1. ISRC
+        2. Apple Music ID
+        3. Shazam key
+        4. Title + artist fallback
+        """
+
+        if self.isrc:
+            return ("isrc", self.isrc)
+
+        if self.apple_music_id:
+            return ("apple_music_id", self.apple_music_id)
+
+        if self.shazam_key:
+            return ("shazam_key", self.shazam_key)
+
+        normalized_title = self.title.strip().lower()
+        normalized_artist = self.artist.strip().lower()
+
+        return (
+            "title_artist",
+            f"{normalized_title}|{normalized_artist}",
+        )
+
 
 def track_from_database_row(row: dict) -> Track:
     """Convert a raw SQLite row into a clean Track object."""

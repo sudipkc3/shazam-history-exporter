@@ -56,3 +56,26 @@ def get_unique_song_count(tracks: list[Track]) -> int:
     }
 
     return len(song_keys)
+
+
+def get_unique_tracks(tracks: list[Track]) -> list[Track]:
+    """
+    Return unique songs from the recognition history.
+
+    Stable identifiers are preferred when available.
+    The first occurrence of each song is preserved.
+    """
+
+    unique_tracks = []
+    seen_identifiers = set()
+
+    for track in tracks:
+        identifier = track.get_identifier()
+
+        if identifier in seen_identifiers:
+            continue
+
+        seen_identifiers.add(identifier)
+        unique_tracks.append(track)
+
+    return unique_tracks
