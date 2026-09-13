@@ -1,2 +1,0 @@
-[console_scripts]
-shazam-history-exporter = shazam_exporter.cli:run
